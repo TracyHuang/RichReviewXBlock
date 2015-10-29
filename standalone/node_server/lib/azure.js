@@ -24,8 +24,19 @@ var request = require('request');
 var ConnectionTD = require('tedious').Connection;
 var RequestTD = require('tedious').Request;
 
+blob_svc.getServiceProperties(function(error, result, response) {
+  if (!error) {
+     var serviceProperties = result;
+     // properties are fetched
+  }
+});
+
+/*
+ shared access signatures
+*/
 exports.getSas = function(container, blob, expiry){ // expires in seconds
     // helpful links:
+    // https://coderead.wordpress.com/2012/11/21/uploading-files-directly-to-blob-storage-from-the-browser/
     // http://www.contentmaster.com/azure/windows-azure-storage-cors/
     // https://azure.microsoft.com/en-us/documentation/articles/storage-nodejs-how-to-use-blob-storage/#work-with-shared-access-signatures
     var t_start = new Date();

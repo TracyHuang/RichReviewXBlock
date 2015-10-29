@@ -28,6 +28,59 @@
             else if(_user_type === 'student'){
                 submission_student.init();
             }
+            /*
+            * Test
+            * http://gauravmantri.com/2013/12/01/windows-azure-storage-and-cors-lets-have-some-fun/
+            * */
+            var selectedFile = null;
+            var reader = null;
+            $('#sas_upload_file').bind('change', function (e) {
+                var files = e.target.files;
+                selectedFile = files[0];
+                console.log(selectedFile);
+            });
+
+            $('.btn_upload').click(
+                function(){
+                    postCourse('getSasForUpload', {container: '7bf0f0add24f13dda0c0a64da0f45a0a6909809e', blob: 'test.pdf'}).then(
+                        function(rtn){
+                            reader = new FileReader();
+                            reader.onloadend = function (evt) {
+                                if (evt.target.readyState == FileReader.DONE) {
+                                    var submitUri = 'https://richreview.blob.core.windows.net/7bf0f0add24f13dda0c0a64da0f45a0a6909809e?'+rtn;
+                                    console.log(submitUri);
+                                    var requestData = new Uint8Array(evt.target.result);
+                                    $.ajax({
+                                        url: submitUri,
+                                        type: "PUT",
+                                        data: requestData,
+                                        processData: false,
+                                        beforeSend: function (xhr) {
+                                            xhr.withCredentials = true;
+                                            xhr.setRequestHeader('x-ms-blob-type', 'BlockBlob');
+                                        },
+                                        success: function (data, status) {
+                                            alert("File uploaded successfully");
+                                            console.log(data);
+                                            console.log(status);
+                                        },
+                                        error: function (xhr, desc, err) {
+                                            console.log(desc);
+                                            console.log(err);
+                                        }
+                                    });
+                                }
+                            };
+                            var fileContent = selectedFile.slice(0, selectedFile.size - 1);
+                            reader.readAsArrayBuffer(fileContent);
+                        }
+                    ).catch(
+                        function(err){
+                            Helper.Util.HandleError(err);
+                        }
+                    );
+                }
+            );
         };
 
         var announcements = (function(){

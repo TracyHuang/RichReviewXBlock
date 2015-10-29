@@ -137,6 +137,13 @@ cms.getSubmissionStudent = function(req, res){
     }
 };
 
+cms.getSasForUpload = function(req, res){
+    if(js_utils.identifyUser(req, res)){
+        var sas = azure.getSas(req.body.container, req.body.blob, 60);
+        js_utils.PostResp(res, req, 200, sas);
+    }
+};
+
 cms.submission = {};
 
 cms.submission.setStatus = function(req, res){
@@ -237,6 +244,9 @@ exports.post = function(req, res){
             break;
         case 'getSubmissionStudent':
             cms.getSubmissionStudent(req, res);
+            break;
+        case 'getSasForUpload':
+            cms.getSasForUpload(req, res);
             break;
         default:
             js_utils.PostResp(res, req, 400, "unidentified request: "+req.query['op']);
