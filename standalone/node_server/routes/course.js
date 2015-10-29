@@ -200,7 +200,7 @@ exports.get = function (req, res) {
                             );
                         }
                         else if(result[1]){ // is_instructor
-                            res.render('cms_instructor_overview',
+                            res.render('cms_student',
                                 {
                                     cur_page: 'CmsInstructor',
                                     user: req.user,

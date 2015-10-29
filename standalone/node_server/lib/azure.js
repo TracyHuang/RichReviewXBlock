@@ -24,6 +24,8 @@ var request = require('request');
 var ConnectionTD = require('tedious').Connection;
 var RequestTD = require('tedious').Request;
 
+
+//Access-Control-Request-Headers: accept, content-type, x-ms-blob-type
 blob_svc.getServiceProperties(function(error, result, response) {
   if (!error) {
      var serviceProperties = result;
@@ -41,14 +43,13 @@ exports.getSas = function(container, blob, expiry){ // expires in seconds
     // https://azure.microsoft.com/en-us/documentation/articles/storage-nodejs-how-to-use-blob-storage/#work-with-shared-access-signatures
     var t_start = new Date();
     var t_expiry = new Date(t_start);
-    t_expiry.setSeconds(t_start.getSeconds() + expiry);
-    t_start.setSeconds(t_start.getSeconds() - expiry);
+    t_expiry.setSeconds(t_start.getSeconds() + 100*expiry);
+    t_start.setSeconds(t_start.getSeconds());
 
     var policy = {
         AccessPolicy:{
             Permission: storage.BlobUtilities.SharedAccessPermissions.WRITE,
-            Start: t_start,
-            Expiry: t_expiry
+            SharedAccessExpiryTime: t_expiry
         }
     };
 

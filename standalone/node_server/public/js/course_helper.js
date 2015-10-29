@@ -47,16 +47,15 @@
                             reader = new FileReader();
                             reader.onloadend = function (evt) {
                                 if (evt.target.readyState == FileReader.DONE) {
-                                    var submitUri = 'https://richreview.blob.core.windows.net/7bf0f0add24f13dda0c0a64da0f45a0a6909809e?'+rtn;
+                                    var submitUri = 'https://richreview.blob.core.windows.net/7bf0f0add24f13dda0c0a64da0f45a0a6909809e/test.pdf?'+rtn;
                                     console.log(submitUri);
                                     var requestData = new Uint8Array(evt.target.result);
                                     $.ajax({
                                         url: submitUri,
-                                        type: "PUT",
+                                        type: 'PUT',
                                         data: requestData,
                                         processData: false,
                                         beforeSend: function (xhr) {
-                                            xhr.withCredentials = true;
                                             xhr.setRequestHeader('x-ms-blob-type', 'BlockBlob');
                                         },
                                         success: function (data, status) {
