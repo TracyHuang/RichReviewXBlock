@@ -42,19 +42,55 @@
 
             $('.btn_upload').click(
                 function(){
-                    postCourse('getSasForUpload', {container: '7bf0f0add24f13dda0c0a64da0f45a0a6909809e', blob: 'test.pdf'}).then(
+                    postCourse('getSasForUpload', {container: 'course', blob: 'test.pdf'}).then(
                         function(rtn){
+                            var submitUri = 'https://richreview.blob.core.windows.net/course/test.pdf?'+rtn;//+'&sp=w&spr=https';
+                            /*
+                            var xhr = new XMLHttpRequest();
+                            if ("withCredentials" in xhr) { // "withCredentials" only exists on XMLHTTPRequest2 objects.
+                                xhr.open('PUT', submitUri, true);
+                                xhr.withCredentials = true;
+                                xhr.setRequestHeader('x-ms-blob-type', 'BlockBlob');
+                                xhr.setRequestHeader('x-ms-blob-content-type', 'application/pdf');
+                            }
+                            else if (typeof XDomainRequest != "undefined") { // Otherwise, XDomainRequest only exists in IE, and is IE's way of making CORS requests.
+                                xhr = new XDomainRequest();
+                                xhr.open(method, path);
+                            }
+                            else {
+                                console.log('Error from GetUrlData: CORS is not supported by the browser.');
+                            }
+
+                            if (!xhr) {
+                                console.log('Error from GetUrlData: CORS is not supported by the browser1.');
+                            }
+                            xhr.onerror = function(event){
+                                console.error(xhr.statusText);
+                            };
+
+                            xhr.addEventListener('progress', function(event) {
+                            });
+
+                            xhr.onreadystatechange = function(){
+                                if (xhr.readyState === 4){   //if complete
+                                    console.log(xhr.status);
+                                }
+                            };
+
+                            xhr.send();
+                            */
+
                             reader = new FileReader();
                             reader.onloadend = function (evt) {
                                 if (evt.target.readyState == FileReader.DONE) {
-                                    var submitUri = 'https://richreview.blob.core.windows.net/7bf0f0add24f13dda0c0a64da0f45a0a6909809e/test.pdf?'+rtn;
                                     console.log(submitUri);
                                     var requestData = new Uint8Array(evt.target.result);
                                     $.ajax({
                                         url: submitUri,
-                                        type: 'PUT',
+                                        method: 'PUT',
                                         data: requestData,
                                         processData: false,
+                                        headers: { "x-ms-blob-type": "BlockBlob"},
                                         beforeSend: function (xhr) {
                                             xhr.setRequestHeader('x-ms-blob-type', 'BlockBlob');
                                         },
@@ -69,7 +105,8 @@
                                         }
                                     });
                                 }
-                            };
+
+                             };
                             var fileContent = selectedFile.slice(0, selectedFile.size - 1);
                             reader.readAsArrayBuffer(fileContent);
                         }

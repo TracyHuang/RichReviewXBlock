@@ -41,19 +41,21 @@ exports.getSas = function(container, blob, expiry){ // expires in seconds
     // https://coderead.wordpress.com/2012/11/21/uploading-files-directly-to-blob-storage-from-the-browser/
     // http://www.contentmaster.com/azure/windows-azure-storage-cors/
     // https://azure.microsoft.com/en-us/documentation/articles/storage-nodejs-how-to-use-blob-storage/#work-with-shared-access-signatures
+    // http://gauravmantri.com/2013/12/01/windows-azure-storage-and-cors-lets-have-some-fun/
     var t_start = new Date();
     var t_expiry = new Date(t_start);
-    t_expiry.setSeconds(t_start.getSeconds() + 100*expiry);
+    t_expiry.setSeconds(t_start.getSeconds() + expiry);
     t_start.setSeconds(t_start.getSeconds());
 
     var policy = {
         AccessPolicy:{
-            Permission: storage.BlobUtilities.SharedAccessPermissions.WRITE,
-            SharedAccessExpiryTime: t_expiry
+            Permissions: storage.BlobUtilities.SharedAccessPermissions.WRITE,
+            Expiry: t_expiry
         }
     };
 
-    var sas = blob_svc.generateSharedAccessSignature(container, blob, policy);
+    var sas = blob_svc.generateSharedAccessSignature(container, blob, policy);//+'&se='+t_expiry.toISOString().replace(':', '%3A').replace(':', '%3A');
+    console.log(container, blob, sas);
     return sas;
 };
 
